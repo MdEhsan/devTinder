@@ -56,11 +56,27 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.put("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.put("/user/:id", async (req, res) => {
+  const userId = req.params.id;
   const updateData = req.body;
 
   try {
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "password",
+      "gender",
+      "photoUrl",
+      "about",
+      "skills",
+    ];
+    const isValidUpdate = Object.keys(updateData).every((field) =>
+      allowedFields.includes(field),
+    );
+
+    if (!isValidUpdate) {
+      return res.status(400).json({ message: "Invalid update fields" });
+    }
     const user = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
     });
