@@ -5,7 +5,6 @@ const User = require("./models/user");
 const { validateSignUpData } = require("./utils/index");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
 const { userAuth } = require("./middlewares/auth");
 const app = express();
 const port = 3000;
@@ -40,7 +39,7 @@ app.post("/login", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.isPassworMatch(password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password" });
     }
