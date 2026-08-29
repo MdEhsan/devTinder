@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
 
-const usreSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -68,4 +69,12 @@ const usreSchema = new mongoose.Schema(
 
 // module.exports = User; in both way we can export the model
 
-module.exports = mongoose.model("User", usreSchema);
+userSchema.methods.getJWTToken = function () {
+  const user = this;
+  const token = jwt.sign({ userId: user._id }, "Tinder@12345", {
+    expiresIn: "1d",
+  });
+  return token;
+};
+
+module.exports = mongoose.model("User", userSchema);
